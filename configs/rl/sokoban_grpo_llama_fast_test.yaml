@@ -1,0 +1,216 @@
+# GRPO Configuration for Sokoban with Llama-3.2-3B - FAST TEST VERSION
+# 快速测试版本：最小化训练时间以验证整个流程
+
+hydra:
+  run:
+    dir: .
+  output_subdir: null
+
+# 实验配置
+exp_name: "sokoban_grpo_llama32_3b_fast_test"
+seed: 42
+logging_dir: ./output/logs
+output_dir: ./output/rl_runs
+system_envs:
+  MODEL_DOWNLOAD_TYPE: HUGGINGFACE_HUB
+  HF_HUB_ENABLE_HF_TRANSFER: '1'
+
+# 检查点配置
+checkpoint_config:
+  type: file_system
+  output_dir: ./output/rl_runs/checkpoints/${exp_name}
+
+# TensorBoard跟踪
+track_with: tensorboard
+tracker_kwargs:
+  log_dir: ./output/rl_runs/tensorboard/${exp_name}
+
+# GPU配置
+num_gpus_per_node: 1
+
+# ===========================
+# 快速测试配置 - 大幅减少训练时间
+# ===========================
+
+# 只训练1步，快速验证流程
+max_steps: 500
+save_steps: 100
+logging_steps: 1
+eval_steps: 50
+resume_from_checkpoint: false
+
+# ===========================
+# GRPO核心配置
+# ===========================
+
+# Group Relative Policy Optimization 参数
+rollout_batch_size: 16              # 只处理2个prompt（最小值）
+adv_estimator: "grpo"               # 使用GRPO优势估计器
+num_return_sequences_in_group: 4    # 每个prompt生成2个响应（减少计算）
+
+prompt_length: 512                # 减少prompt长度
+response_length: 256                # 减少响应长度
+
+# PPO优化参数
+ppo_epochs: 1                       # 每批数据的优化轮数
+use_kl_loss: true                   # 使用KL散度损失
+kl_loss_coef: 0.001                 # KL损失系数
+loss_agg_mode: "seq-mean-token-mean"  # 损失聚合模式
+
+# 优势函数配置
+whiten_advantages: true             # 优势值白化
+advantage_clip: 2.0                 # 优势值裁剪
+
+# 损失函数配置
+dual_clip_loss: true                # 使用双重裁剪损失
+
+# 奖励配置
+reward_clip: 10.0                   # 奖励裁剪
+reward_norm: null                   # 不进行奖励归一化
+reward_shift: false                 # 不进行奖励平移
+reward_scale: false                 # 不进行奖励缩放
+add_token_level_kl: false           # 不添加token级别KL
+
+# ===========================
+# 模型配置
+# ===========================
+
+# Actor模型（策略网络）
+pretrain: meta-llama/Llama-3.2-3B-Instruct
+
+# Reference模型（用于KL计算）
+# 使用相同的模型作为reference
+reference_model: meta-llama/Llama-3.2-3B-Instruct
+
+# ===========================
+# 验证配置
+# ===========================
+validation:
+  data_args:
+    template: native
+    file_name:
+      - data/rl/sokoban_val_prompts.jsonl
+  generating_args:
+    max_new_tokens: 256               # 减少生成长度
+    top_p: 0.9
+    top_k: 50
+    num_beams: 1
+    temperature: 0.8
+    do_sample: true
+    num_return_sequences: 1
+
+# ===========================
+# Actor训练配置
+# ===========================
+actor_train:
+  model_args:
+    disable_gradient_checkpointing: false
+    dtype: bf16
+    model_type: null
+    attn_implementation: sdpa         # 使用sd加速
+  training_args:
+    learning_rate: 1.0e-06
+    weight_decay: 0.0
+    per_device_train_batch_size: 1
+    gradient_accumulation_steps: 16     # 减少累积步数
+    warmup_steps: 50                    # 减少warmup
+    num_train_epochs: 1
+    max_grad_norm: 1.0
+  data_args:
+    template: native
+    file_name:
+      - data/rl/sokoban_train_prompts.jsonl
+    messages: messages
+    interleave_probs: '1.0'
+    domain_interleave_probs:
+      sokoban: 1.0
+    preprocessing_num_workers: 4      # 减少worker数量
+  strategy_args:
+    strategy_name: deepspeed_train
+    strategy_config:
+      zero_optimization:
+        stage: 2
+      optimizer:
+        type: Adam
+        params:
+          lr: 1.0e-06
+          betas:
+          - 0.9
+          - 0.999
+          weight_decay: 0.0
+      fp16:
+        enabled: false
+      bf16:
+        enabled: true
+  device_mapping: '[0]'
+  infer_batch_size: 2
+
+# ===========================
+# Actor推理配置
+# ===========================
+actor_infer:
+  model_args:
+    disable_gradient_checkpointing: true
+    dtype: bf16
+    attn_implementation: sdpa
+  generating_args:
+    # max_new_tokens: 128      
+    max_new_tokens: ${response_length}
+         # 减少生成长度
+    top_p: 0.95
+    top_k: 50
+    num_beams: 1
+    temperature: 0.95
+    do_sample: true
+    num_return_sequences: 4           # 减少生成数量
+    pad_token_id: 0
+    eos_token_id: 2
+  data_args:
+    template: native
+  strategy_args:
+    strategy_name: hf_infer
+    strategy_config: null
+  device_mapping: '[0]'
+  infer_batch_size: 1
+
+# ===========================
+# Reference模型配置
+# ===========================
+reference:
+  model_args:
+    disable_gradient_checkpointing: true
+    dtype: bf16
+    model_type: null
+    attn_implementation: sdpa
+  data_args:
+    template: native
+  strategy_args:
+    strategy_name: hf_infer
+    strategy_config: null
+  device_mapping: '[0]'
+  infer_batch_size: 2
+
+# ===========================
+# Reward配置
+# ===========================
+rewards:
+  sokoban:
+    worker_cls: roll.pipeline.rlvr.rewards.sokoban_reward_worker.SokobanEnvRewardWorker
+    reward_type: soft
+    model_args:
+      model_name_or_path: meta-llama/Llama-3.2-3B-Instruct
+    data_args:
+      template: native
+      max_steps: 20                     # 减少最大步数
+      dim_room:
+      - 10
+      - 10
+      num_boxes: 4                      # 减少箱子数量（简化任务）
+    world_size: 1
+    infer_batch_size: 1
+    tag_included:
+      - sokoban
+    success_reward: 10.0
+    step_penalty: -0.1
+    invalid_action_penalty: -1.0
+    box_on_target_reward: 1.0

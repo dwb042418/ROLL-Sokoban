@@ -1,0 +1,217 @@
+# GRPO Configuration for Sokoban with Llama-3.2-3B
+# 基于ROLL框架的强化学习微调配置
+
+hydra:
+  run:
+    dir: .
+  output_subdir: null
+
+# 实验配置
+exp_name: "sokoban_grpo_llama32_3b"
+seed: 42
+logging_dir: ./output/logs
+output_dir: ./output/rl_runs
+system_envs:
+  MODEL_DOWNLOAD_TYPE: HUGGINGFACE_HUB
+  HF_HUB_ENABLE_HF_TRANSFER: '1'
+
+# 检查点配置
+checkpoint_config:
+  type: file_system
+  output_dir: ./output/rl_runs/checkpoints/${exp_name}
+
+# TensorBoard跟踪
+track_with: tensorboard
+tracker_kwargs:
+  log_dir: ./output/rl_runs/tensorboard/${exp_name}
+
+# GPU配置
+num_gpus_per_node: 1
+
+# 训练步数配置
+max_steps: 500
+save_steps: 100
+logging_steps: 1
+eval_steps: 50
+resume_from_checkpoint: false
+
+# ===========================
+# GRPO核心配置
+# ===========================
+
+# Group Relative Policy Optimization 参数
+rollout_batch_size: 16              # 每批次的prompt数量（需要小于训练数据数量19）
+adv_estimator: "grpo"               # 使用GRPO优势估计器
+num_return_sequences_in_group: 4    # 每个prompt生成的响应数量（group size）
+
+prompt_length: 512                  # Prompt最大长度
+response_length: 256                # 响应最大长度（动作序列）
+
+# PPO优化参数
+ppo_epochs: 1                       # 每批数据的优化轮数
+use_kl_loss: true                   # 使用KL散度损失
+kl_loss_coef: 0.001                 # KL损失系数
+loss_agg_mode: "seq-mean-token-mean"  # 损失聚合模式
+
+# 优势函数配置
+whiten_advantages: true             # 优势值白化
+advantage_clip: 2.0                 # 优势值裁剪
+
+# 损失函数配置
+dual_clip_loss: true                # 使用双重裁剪损失
+
+# 奖励配置
+reward_clip: 10.0                   # 奖励裁剪
+reward_norm: null                   # 不进行奖励归一化
+reward_shift: false                 # 不进行奖励平移
+reward_scale: false                 # 不进行奖励缩放
+add_token_level_kl: false           # 不添加token级别KL
+
+# ===========================
+# 模型配置
+# ===========================
+
+# Actor模型（策略网络）
+pretrain: meta-llama/Llama-3.2-3B-Instruct
+
+# Reference模型（用于KL计算）
+# 使用相同的模型作为reference
+reference_model: meta-llama/Llama-3.2-3B-Instruct
+
+# ===========================
+# 验证配置
+# ===========================
+validation:
+  data_args:
+    template: native
+    file_name:
+      - data/rl/sokoban_val_prompts.jsonl
+  generating_args:
+    max_new_tokens: ${response_length}
+    top_p: 0.9
+    top_k: 50
+    num_beams: 1
+    temperature: 0.8
+    do_sample: true
+    num_return_sequences: 1
+
+# ===========================
+# Actor训练配置
+# ===========================
+actor_train:
+  model_args:
+    disable_gradient_checkpointing: false
+    dtype: bf16
+    model_type: ~
+    attn_implementation: sdpa
+
+  training_args:
+    learning_rate: 1.0e-6            # 较小的学习率用于RL微调
+    weight_decay: 0.0
+    per_device_train_batch_size: 1   # 小batch size节省显存
+    gradient_accumulation_steps: 16  # 梯度累积
+    warmup_steps: 50
+    num_train_epochs: 1              # GRPO通常只需要1个epoch
+    max_grad_norm: 1.0
+
+  data_args:
+    template: native
+    file_name:
+      - data/rl/sokoban_train_prompts.jsonl
+    messages: messages
+    interleave_probs: "1.0"
+    domain_interleave_probs:
+      sokoban: 1.0
+    preprocessing_num_workers: 4
+
+  strategy_args:
+    strategy_name: deepspeed_train
+    strategy_config:
+      zero_optimization:
+        stage: 2
+      optimizer:
+        type: Adam
+        params:
+          lr: 1.0e-6
+          betas: [0.9, 0.999]
+          weight_decay: 0.0
+      fp16:
+        enabled: false
+      bf16:
+        enabled: true
+
+  device_mapping: '[0]'
+  infer_batch_size: 2
+
+# ===========================
+# Actor推理配置（用于rollout生成）
+# ===========================
+actor_infer:
+  model_args:
+    disable_gradient_checkpointing: true
+    dtype: bf16
+    attn_implementation: sdpa
+
+  generating_args:
+    max_new_tokens: ${response_length}
+    top_p: 0.95                     # 高top_p增加探索
+    top_k: 50
+    num_beams: 1
+    temperature: 0.95                # 高温度增加随机性
+    do_sample: true
+    num_return_sequences: ${num_return_sequences_in_group}
+    pad_token_id: 0
+    eos_token_id: 2
+
+  data_args:
+    template: native
+
+  strategy_args:
+    strategy_name: hf_infer          # 使用HuggingFace推理
+    strategy_config: null
+
+  device_mapping: '[0]'
+  infer_batch_size: 1
+
+# ===========================
+# Reference模型配置
+# ===========================
+reference:
+  model_args:
+    disable_gradient_checkpointing: true
+    dtype: bf16
+    model_type: ~
+    attn_implementation: sdpa
+
+  data_args:
+    template: native
+
+  strategy_args:
+    strategy_name: hf_infer          # 使用HuggingFace推理
+    strategy_config: null
+
+  device_mapping: '[0]'
+  infer_batch_size: 4
+
+# ===========================
+# Reward配置
+# ===========================
+rewards:
+  sokoban:
+    worker_cls: roll.pipeline.rlvr.rewards.sokoban_reward_worker.SokobanEnvRewardWorker
+    reward_type: soft
+    model_args:
+      model_name_or_path: ${pretrain}
+    data_args:
+      template: native
+      max_steps: 20                   # 环境最大步数
+      dim_room: [10, 10]              # 房间大小
+      num_boxes: 4                    # 箱子数量
+    world_size: 1
+    infer_batch_size: 1
+    tag_included: [sokoban]
+    # 奖励配置
+    success_reward: 10.0              # 成功奖励
+    step_penalty: -0.1                # 每步惩罚
+    invalid_action_penalty: -1.0      # 无效动作惩罚
+    box_on_target_reward: 1.0         # 箱子到位奖励

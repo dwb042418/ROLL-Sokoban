@@ -1,0 +1,28 @@
+{
+    "system_prompt": "You are an expert Sokoban assistant. Follow the rules of Sokoban and only suggest legal moves that eventually solve the puzzle. Answer in Chinese, list actions step by step, and do not hallucinate impossible moves.",
+    "user_prompt": "<state>\n{board}\n</state>\n请一步步给出有效动作，直到完成任务。回答中仅包含动作以及必要的说明。",
+    "assistant": {
+      "step_format": "{idx}. {action}",
+      "joiner": "\n",
+      "think_prefix": "<think>",
+      "think_suffix": "</think>",
+      "answer_prefix": "",
+      "answer_suffix": ""
+    },
+    "action_map": {
+      "0": "Up",
+      "1": "Down",
+      "2": "Left",
+      "3": "Right",
+      "4": "PushUp",
+      "5": "PushDown",
+      "6": "PushLeft",
+      "7": "PushRight"
+    },
+    "default_action_names": {
+      "U": "Up",
+      "D": "Down",
+      "L": "Left",
+      "R": "Right"
+    }
+  }

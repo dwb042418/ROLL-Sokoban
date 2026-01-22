@@ -1,0 +1,39 @@
+# Evaluation configuration for Sokoban environment
+
+# Environment settings
+env:
+  env_id: sokoban
+  dim_room: [10, 10]
+  num_boxes: 4
+  max_steps: 20
+  search_depth: 300
+  render_mode: text
+
+# Model settings
+model:
+  pretrain: Qwen/Qwen2-1.5B-Instruct
+  dtype: bf16
+  trust_remote_code: true
+  use_flash_attn: false
+  gradient_checkpointing: false  # Disable for inference
+  template: qwen2_5
+
+# Inference settings
+inference:
+  batch_size: 1
+  max_new_tokens: 50
+  temperature: 1.0
+  top_p: 1.0
+  do_sample: false
+
+# Evaluation settings
+evaluation:
+  num_episodes: 200
+  seed: 2025
+  track_rewards: true
+  track_failure_modes: true
+
+# Action parsing
+action:
+  pattern: "<answer>(.*?)</answer>"
+  special_tokens: ["<|im_start|>", "<|im_end|>"]
