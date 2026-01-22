@@ -786,13 +786,5 @@ bash scripts/rl/run_grpo_sokoban.sh
 ### D. 参考资料
 
 1. **ROLL文档**: https://alibaba.github.io/ROLL/
-2. **GRPO论文**: [待补充]
-3. **Llama-3.2模型**: https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct
-4. **Sokoban环境**: https://github.com/mpSchrader/gym-sokoban
-
----
-
-**报告编写日期**: 2026年1月22日
-**ROLL版本**: v1.0
-**作者**: [您的名字]
-**项目地址**: [项目链接]
+2. **Llama-3.2模型**: https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct
+3. **Sokoban环境**: https://github.com/mpSchrader/gym-sokoban
