@@ -1,0 +1,233 @@
+{
+  "steps": [
+    {
+      "observation": "######\n######\n###P_#\n###__#\n##OX_#\n######",
+      "action": "Right",
+      "reward": -0.1,
+      "terminated": false,
+      "truncated": false,
+      "info": {
+        "metrics": {
+          "action_is_effective": true,
+          "action_is_valid": true,
+          "success": false,
+          "format_penalty": 0
+        },
+        "metrics_agg_mode": {
+          "action_is_effective": "mean",
+          "action_is_valid": "mean",
+          "success": "last",
+          "format_penalty": "mean"
+        },
+        "action_desc": "At turn 1, you moved Right, which is effective.",
+        "action": 4,
+        "action_content": "Right",
+        "think_content": ""
+      }
+    },
+    {
+      "observation": "######\n######\n###_P#\n###__#\n##OX_#\n######",
+      "action": "Down",
+      "reward": -0.1,
+      "terminated": false,
+      "truncated": false,
+      "info": {
+        "metrics": {
+          "action_is_effective": true,
+          "action_is_valid": true,
+          "success": false,
+          "format_penalty": 0
+        },
+        "metrics_agg_mode": {
+          "action_is_effective": "mean",
+          "action_is_valid": "mean",
+          "success": "last",
+          "format_penalty": "mean"
+        },
+        "action_desc": "At turn 2, you moved Down, which is effective.",
+        "action": 2,
+        "action_content": "Down",
+        "think_content": ""
+      }
+    },
+    {
+      "observation": "######\n######\n###__#\n###_P#\n##OX_#\n######",
+      "action": "Down",
+      "reward": -0.1,
+      "terminated": false,
+      "truncated": false,
+      "info": {
+        "metrics": {
+          "action_is_effective": true,
+          "action_is_valid": true,
+          "success": false,
+          "format_penalty": 0
+        },
+        "metrics_agg_mode": {
+          "action_is_effective": "mean",
+          "action_is_valid": "mean",
+          "success": "last",
+          "format_penalty": "mean"
+        },
+        "action_desc": "At turn 3, you moved Down, which is effective.",
+        "action": 2,
+        "action_content": "Down",
+        "think_content": ""
+      }
+    },
+    {
+      "observation": "######\n######\n###__#\n###__#\n##OXP#\n######",
+      "action": "Down",
+      "reward": -0.1,
+      "terminated": false,
+      "truncated": false,
+      "info": {
+        "metrics": {
+          "action_is_effective": false,
+          "action_is_valid": true,
+          "success": false,
+          "format_penalty": 0
+        },
+        "metrics_agg_mode": {
+          "action_is_effective": "mean",
+          "action_is_valid": "mean",
+          "success": "last",
+          "format_penalty": "mean"
+        },
+        "action_desc": "At turn 4, you tried to move Down, which is not effective yet.",
+        "action": 2,
+        "action_content": "Down",
+        "think_content": ""
+      }
+    },
+    {
+      "observation": "######\n######\n###__#\n###__#\n##OXP#\n######",
+      "action": "Down",
+      "reward": -0.1,
+      "terminated": false,
+      "truncated": false,
+      "info": {
+        "metrics": {
+          "action_is_effective": false,
+          "action_is_valid": true,
+          "success": false,
+          "format_penalty": 0
+        },
+        "metrics_agg_mode": {
+          "action_is_effective": "mean",
+          "action_is_valid": "mean",
+          "success": "last",
+          "format_penalty": "mean"
+        },
+        "action_desc": "At turn 5, you tried to move Down, which is not effective yet.",
+        "action": 2,
+        "action_content": "Down",
+        "think_content": ""
+      }
+    },
+    {
+      "observation": "######\n######\n###__#\n###__#\n##OXP#\n######",
+      "action": "Down",
+      "reward": -0.1,
+      "terminated": false,
+      "truncated": false,
+      "info": {
+        "metrics": {
+          "action_is_effective": false,
+          "action_is_valid": true,
+          "success": false,
+          "format_penalty": 0
+        },
+        "metrics_agg_mode": {
+          "action_is_effective": "mean",
+          "action_is_valid": "mean",
+          "success": "last",
+          "format_penalty": "mean"
+        },
+        "action_desc": "At turn 6, you tried to move Down, which is not effective yet.",
+        "action": 2,
+        "action_content": "Down",
+        "think_content": ""
+      }
+    },
+    {
+      "observation": "######\n######\n###__#\n###__#\n##OXP#\n######",
+      "action": "Up",
+      "reward": -0.1,
+      "terminated": false,
+      "truncated": false,
+      "info": {
+        "metrics": {
+          "action_is_effective": true,
+          "action_is_valid": true,
+          "success": false,
+          "format_penalty": 0
+        },
+        "metrics_agg_mode": {
+          "action_is_effective": "mean",
+          "action_is_valid": "mean",
+          "success": "last",
+          "format_penalty": "mean"
+        },
+        "action_desc": "At turn 7, you moved Up, which is effective.",
+        "action": 1,
+        "action_content": "Up",
+        "think_content": ""
+      }
+    },
+    {
+      "observation": "######\n######\n###__#\n###_P#\n##OX_#\n######",
+      "action": "Down",
+      "reward": -0.1,
+      "terminated": false,
+      "truncated": false,
+      "info": {
+        "metrics": {
+          "action_is_effective": true,
+          "action_is_valid": true,
+          "success": false,
+          "format_penalty": 0
+        },
+        "metrics_agg_mode": {
+          "action_is_effective": "mean",
+          "action_is_valid": "mean",
+          "success": "last",
+          "format_penalty": "mean"
+        },
+        "action_desc": "At turn 8, you moved Down, which is effective.",
+        "action": 2,
+        "action_content": "Down",
+        "think_content": ""
+      }
+    },
+    {
+      "observation": "######\n######\n###__#\n###__#\n##OXP#\n######",
+      "action": "Left",
+      "reward": 10.9,
+      "terminated": true,
+      "truncated": false,
+      "info": {
+        "metrics": {
+          "action_is_effective": true,
+          "action_is_valid": true,
+          "success": true,
+          "format_penalty": 0
+        },
+        "metrics_agg_mode": {
+          "action_is_effective": "mean",
+          "action_is_valid": "mean",
+          "success": "last",
+          "format_penalty": "mean"
+        },
+        "action_desc": "At turn 9, you moved Left, which is effective.",
+        "action": 3,
+        "action_content": "Left",
+        "think_content": ""
+      }
+    }
+  ],
+  "success": true,
+  "total_reward": 10.1,
+  "length": 9,
+  "seed": 24
+}

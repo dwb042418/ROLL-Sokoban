@@ -1,0 +1,58 @@
+{
+  "steps": [
+    {
+      "observation": "######\n#__P_#\n#__X_#\n#____#\n###O_#\n######",
+      "action": "Down",
+      "reward": -0.1,
+      "terminated": false,
+      "truncated": false,
+      "info": {
+        "metrics": {
+          "action_is_effective": true,
+          "action_is_valid": true,
+          "success": false,
+          "format_penalty": 0
+        },
+        "metrics_agg_mode": {
+          "action_is_effective": "mean",
+          "action_is_valid": "mean",
+          "success": "last",
+          "format_penalty": "mean"
+        },
+        "action_desc": "At turn 1, you moved Down, which is effective.",
+        "action": 2,
+        "action_content": "Down",
+        "think_content": ""
+      }
+    },
+    {
+      "observation": "######\n#____#\n#__P_#\n#__X_#\n###O_#\n######",
+      "action": "Down",
+      "reward": 10.9,
+      "terminated": true,
+      "truncated": false,
+      "info": {
+        "metrics": {
+          "action_is_effective": true,
+          "action_is_valid": true,
+          "success": true,
+          "format_penalty": 0
+        },
+        "metrics_agg_mode": {
+          "action_is_effective": "mean",
+          "action_is_valid": "mean",
+          "success": "last",
+          "format_penalty": "mean"
+        },
+        "action_desc": "At turn 2, you moved Down, which is effective.",
+        "action": 2,
+        "action_content": "Down",
+        "think_content": ""
+      }
+    }
+  ],
+  "success": true,
+  "total_reward": 10.8,
+  "length": 2,
+  "seed": 87
+}

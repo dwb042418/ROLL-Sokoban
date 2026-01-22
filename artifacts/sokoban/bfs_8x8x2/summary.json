@@ -1,0 +1,12 @@
+{
+  "num_episodes": 150,
+  "success": 23,
+  "success_rate": 0.15333333333333332,
+  "dim_room": [
+    8,
+    8
+  ],
+  "num_boxes": 2,
+  "max_steps": 120,
+  "seed_offset": 0
+}

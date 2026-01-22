@@ -1,0 +1,33 @@
+{
+  "steps": [
+    {
+      "observation": "######\n###_O#\n###_X#\n####P#\n######\n######",
+      "action": "Up",
+      "reward": 10.9,
+      "terminated": true,
+      "truncated": false,
+      "info": {
+        "metrics": {
+          "action_is_effective": true,
+          "action_is_valid": true,
+          "success": true,
+          "format_penalty": 0
+        },
+        "metrics_agg_mode": {
+          "action_is_effective": "mean",
+          "action_is_valid": "mean",
+          "success": "last",
+          "format_penalty": "mean"
+        },
+        "action_desc": "At turn 1, you moved Up, which is effective.",
+        "action": 1,
+        "action_content": "Up",
+        "think_content": ""
+      }
+    }
+  ],
+  "success": true,
+  "total_reward": 10.9,
+  "length": 1,
+  "seed": 255
+}

@@ -1,0 +1,39 @@
+{
+  "input_dir": "/home/dataset-local/duwenbiao/ROLL/artifacts/sokoban/bfs_8x8x2",
+  "output_dir": "/home/dataset-local/duwenbiao/ROLL/artifacts/sokoban/filtered",
+  "filters": {
+    "min_total_reward": -10.0,
+    "max_total_reward": null,
+    "require_success": true,
+    "max_length": 80,
+    "max_repeat_action_ratio": null
+  },
+  "counters": {
+    "total_processed": 150,
+    "total_retained": 21,
+    "total_rejected": 129,
+    "pass_rate": 0.14,
+    "retained_success_count": 21,
+    "retained_success_rate": 1.0
+  },
+  "rejection_reasons": {
+    "max_length": 129,
+    "require_success": 127,
+    "min_total_reward": 127
+  },
+  "stats": {
+    "retained_total_reward": {
+      "min": 4.600000000000009,
+      "max": 11.6,
+      "mean": 8.204761904761906,
+      "median": 8.5
+    },
+    "retained_length": {
+      "min": 4.0,
+      "max": 74.0,
+      "mean": 37.95238095238095,
+      "median": 35.0
+    }
+  },
+  "dry_run": false
+}
