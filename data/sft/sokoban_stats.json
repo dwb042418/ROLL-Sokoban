@@ -1,0 +1,64 @@
+{
+  "train": {
+    "num_samples": 40,
+    "avg_length": 22.85,
+    "max_length": 75,
+    "min_length": 1,
+    "median_length": 19,
+    "success_rate": 1.0,
+    "actions_top10": [
+      [
+        "Down",
+        246
+      ],
+      [
+        "Left",
+        236
+      ],
+      [
+        "Up",
+        227
+      ],
+      [
+        "Right",
+        205
+      ]
+    ],
+    "avg_reward": 8.715,
+    "max_reward": 10.9,
+    "min_reward": 3.5000000000000107
+  },
+  "val": {
+    "num_samples": 4,
+    "avg_length": 13.0,
+    "max_length": 19,
+    "min_length": 7,
+    "median_length": 15,
+    "success_rate": 1.0,
+    "actions_top10": [
+      [
+        "Up",
+        15
+      ],
+      [
+        "Right",
+        15
+      ],
+      [
+        "Down",
+        13
+      ],
+      [
+        "Left",
+        9
+      ]
+    ],
+    "avg_reward": 9.700000000000001,
+    "max_reward": 10.3,
+    "min_reward": 9.1
+  },
+  "skipped": 0,
+  "template": "configs/templates/qwen_instruct.json",
+  "include_think": false,
+  "max_steps": 80
+}
